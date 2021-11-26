@@ -1,39 +1,25 @@
-import QrCode from "qrcode-reader";
-import { useEffect, useState } from "react";
-import "./App.css";
+import React, { forwardRef } from "react";
+import QrReader from "react-qr-scanner";
 
-const App = () => {
-  const [qr, setQr] = useState();
+const onScan = data => {
+  if (!data) return;
+  console.log(data);
+};
 
-  useEffect(() => {
-    const newQr = new QrCode();
-    newQr.callback = (error, res) => {
-      console.log("Callback!");
-      console.log(error);
-      console.log(res);
-    };
-    setQr(newQr);
-  }, []);
-
-  useEffect(() => {
-    const video = document.getElementById("video");
-    if (qr && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      // Not adding `{ audio: true }` since we only want video now
-      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-        //video.src = window.URL.createObjectURL(stream);
-        video.srcObject = stream;
-        video.play();
-        qr.decode(stream);
-      });
-    }
-  }, [qr]);
-
+const App = forwardRef((props, ref) => {
   return (
-    <div>
-      <video id="video" width="640" height="480" autoPlay></video>
-      <button id="snap">Snap Photo</button>
-      <canvas id="canvas" width="640" height="480"></canvas>
+    <div style={{ width: "400px", margin: "auto" }}>
+      <QrReader
+        onScan={onScan}
+        onLoad={() => {}}
+        onError={() => {}}
+        ref={ref}
+        facingmode={"user"}
+        maximagesize={1000}
+        delay={500}
+      />
     </div>
   );
-};
+});
+
 export default App;
